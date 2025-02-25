@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\RolesEnum;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,11 +31,19 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
-
+    
         $request->session()->regenerate();
-
-        return redirect()->intended(route('dashboard', absolute: false));
+    
+        $user = Auth::user();
+        // Check if user is admin or vendor
+        if ($user->hasAnyRole([RolesEnum::Admin, RolesEnum::Vendor])) {
+            return redirect()->route('admin.dashboard');
+        } else {
+            $route = route('dashboard', absolute: false);
+        }
+        return redirect()->intended($route); // Redirect to user dashboard
     }
+    
 
     /**
      * Destroy an authenticated session.
