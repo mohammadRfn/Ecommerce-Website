@@ -1,6 +1,7 @@
 <?php
 
 use App\RolesEnum;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Route;
 
 // --------------------------
@@ -32,4 +33,6 @@ Route::group([
 
           
         });
+    Route::crud('department', 'DepartmentCrudController');
+    Route::crud('category', 'CategoryCrudController');
     });
