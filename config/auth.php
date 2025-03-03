@@ -40,6 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'backpack' => [
+            'driver' => 'session',
+            'provider' => 'users', // Make sure 'users' provider is set correctly
+        ],
     ],
 
     /*

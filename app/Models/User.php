@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -33,7 +34,16 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+  
+    public function assignRole($role)
+    {
+        // For debugging, let's log what role is being assigned
+        info("Assigning role: " . $role);
 
+        $this->role = $role;
+        $saved = $this->save();
+        info("User saved: " . ($saved ? "true" : "false"));
+    }
     /**
      * Get the attributes that should be cast.
      *

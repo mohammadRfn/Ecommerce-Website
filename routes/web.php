@@ -29,5 +29,34 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
+// Admin-Only Routes (Backpack CRUD - No Duplicate Naming)
+Route::middleware(['auth', 'role:Admin'])->group(function () {
+    Route::group([
+        'prefix' => config('backpack.base.route_prefix', 'admin'),
+        'middleware' => array_merge(
+            (array) config('backpack.base.web_middleware', 'web'),
+            (array) config('backpack.base.middleware_key', 'admin')
+        ),
+        'namespace' => 'App\Http\Controllers\Admin',
+    ], function () {
+        Route::crud('department', 'DepartmentCrudController'); // Admins can manage departments
+        Route::crud('category', 'CategoryCrudController');
+    });
+});
+
+// Vendor-Only Routes (Backpack CRUD - No Duplicate Naming)
+// Route::middleware(['auth', 'role:Vendor'])->group(function () {
+//     Route::group([
+//         'prefix' => config('backpack.base.route_prefix', 'admin'),
+//         'middleware' => array_merge(
+//             (array) config('backpack.base.web_middleware', 'web'),
+//             (array) config('backpack.base.middleware_key', 'admin')
+//         ),
+//         'namespace' => 'App\Http\Controllers\Admin',
+//     ], function () {
+//          // Vendors can manage categories
+//     });
+// });
 // Load auth routes
 require __DIR__.'/auth.php';

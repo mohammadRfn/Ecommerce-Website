@@ -27,17 +27,11 @@ class DepartmentCrudController extends CrudController
      */
     public function setup()
     {
+        $this->middleware(['role:Admin']);
         CRUD::setModel(\App\Models\Department::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/department');
         CRUD::setEntityNameStrings('department', 'departments');
-        // $this->middleware(function ($request, $next) {
-        //     // Check if the user is an admin using the enum
-        //     if (auth()->user()->role !== RolesEnum::Admin->value) {
-        //         return redirect('/');  // Redirect non-admin users
-        //     }
-
-        //     return $next($request);
-        // });
+        
     }
     /**
      * Define what happens when the List operation is loaded.
@@ -70,11 +64,13 @@ class DepartmentCrudController extends CrudController
     {
         CRUD::setValidation(DepartmentRequest::class);
         //CRUD::setFromDb(); // set fields from db columns.
-        CRUD::field('name')->label('Department name');
+        CRUD::field('name')->label('Department Name');
         CRUD::field('slug');
-        CRUD::field('meta_description')->label('description');
-        CRUD::field('meta_title')->label('meta title');
-        CRUD::field('active');
+        CRUD::field('meta_description')->label('Description');
+        CRUD::field('meta_title')->label('Meta Title');
+        CRUD::field('active')->type('checkbox')->label('Active');
+        
+        
 
         /**
          * Fields can be defined using the fluent syntax:

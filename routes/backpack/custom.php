@@ -1,7 +1,6 @@
 <?php
 
 use App\RolesEnum;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Route;
 
 // --------------------------
@@ -14,25 +13,35 @@ Route::group([
     'prefix' => config('backpack.base.route_prefix', 'admin'),
     'middleware' => array_merge(
         (array) config('backpack.base.web_middleware', 'web'),
-        (array) config('backpack.base.middleware_key', 'admin')
+        (array) config('backpack.base.middleware_key', 'admin'),
+        ['auth'] // Ensure the user is authenticated
     ),
     'namespace' => 'App\Http\Controllers\Admin',
-], function () { 
-    // Apply role-based restriction inside the group
+], function () {
+    // Dashboard: Accessible by both Admin and Vendor
     Route::middleware(['role:' . RolesEnum::Admin->value . '|' . RolesEnum::Vendor->value])
         ->group(function () {
-            // Place your Backpack routes here
             Route::get('/', function () {
                 return redirect()->route('backpack.dashboard');
             })->name('admin.dashboard');
-
-            // 🔹 Backpack Authentication Routes
-            // Route::get('/login', 'App\Http\Controllers\Admin\AuthController@showLoginForm')->name('admin.login');
-            // Route::post('/login', 'App\Http\Controllers\Admin\AuthController@login');
-            // Route::post('/logout', 'App\Http\Controllers\Admin\AuthController@logout')->name('admin.logout');
-
-          
         });
-    Route::crud('department', 'DepartmentCrudController');
-    Route::crud('category', 'CategoryCrudController');
-    });
+
+       // Admin-Only Routes: Only Admin users can access these CRUD routes.
+       Route::middleware(['role:' . RolesEnum::Admin->value])
+       ->group(function () {
+           Route::crud('department', 'DepartmentCrudController');
+           Route::crud('category', 'CategoryCrudController'); // Only Admin now
+       });
+
+    // Vendor-Only Routes: Only Vendor users can access these CRUD routes.
+    Route::middleware(['role:' . RolesEnum::Vendor->value])
+        ->group(function () {
+            // You can add more vendor-specific routes here.
+        });
+
+    // Optionally, add routes for regular users if needed:
+    Route::middleware(['role:' . RolesEnum::User->value])
+        ->group(function () {
+            // Define user-specific routes here.
+        });
+});
