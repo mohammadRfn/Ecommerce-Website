@@ -26,16 +26,18 @@ Route::group([
             })->name('admin.dashboard');
         });
 
-       // Admin-Only Routes: Only Admin users can access these CRUD routes.
-       Route::middleware(['role:' . RolesEnum::Admin->value])
-       ->group(function () {
-           Route::crud('department', 'DepartmentCrudController');
-           Route::crud('category', 'CategoryCrudController'); // Only Admin now
-       });
+    // Admin-Only Routes: Only Admin users can access these CRUD routes.
+    Route::middleware(['role:' . RolesEnum::Admin->value])
+        ->group(function () {
+            Route::crud('department', 'DepartmentCrudController');
+            Route::crud('category', 'CategoryCrudController'); // Only Admin now
+        });
 
     // Vendor-Only Routes: Only Vendor users can access these CRUD routes.
     Route::middleware(['role:' . RolesEnum::Vendor->value])
         ->group(function () {
+            Route::crud('product', 'ProductCrudController');
+
             // You can add more vendor-specific routes here.
         });
 
